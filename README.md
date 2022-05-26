@@ -18,9 +18,10 @@ cd TileAnalyzer
 ````
 
 ## Convert CSV to ROOT files
-Copy your *.csv files in folder named files, and then run the converter script
+Copy your *.csv files in folder named files, and then run the converter script to create a txt and a ROOT file
 ```` 
-python scripts/CSVtoROOTconverter.py --input files/*.csv #It will create a txt and a ROOT file
+python scripts/CSVtoROOTconverter.py --input files/histos_DESY_May23.csv #for desy tiles
+python scripts/CSVtoROOTconverter.py --input files/histos_calibration_May23.csv #for calibration tiles
 ````
 
 ## Make Plots
