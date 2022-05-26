@@ -22,3 +22,16 @@ Copy your *.csv files in folder named files, and then run the converter script
 ```` 
 python scripts/CSVtoROOTconverter.py --input files/*.csv #It will create a txt and a ROOT file
 ````
+
+## Make Plots
+First step is to make 1d or 2d histograms. The code skeleton PyROOT-based using the script called histogrammer.py in the plotter folder. That script create a ROOT file with histograms, and put it in a folder called histograms
+```` 
+cd plotter
+python histogrammer.py --inputfile ../files/calibration_May23.root --outputfile histos_calibration_May23.root        #for calibration tiles
+python histogrammer.py --inputfile ../files/DESY_May23.root        --outputfile histos_DESY_May23.root               #for desy tiles
+````
+
+Then, the next step is plot your 1d and 2d histograms using the plotter.py. The instructions are inside the script. The plot are saved in the folders plots1d and plots2d.
+```` 
+python plotter.py
+````

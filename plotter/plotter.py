@@ -27,7 +27,7 @@ def Plot1D(directory,files,histo):
               htmp.SetLineColor(files[k][2])
               htmp.SetLineWidth(2)
 
-              #Add histos to stack or individually for plotting  
+              #Add histos for plotting  
               allhistos.append(htmp)    
               file.Close()
 
@@ -110,7 +110,7 @@ def Plot2D(directory,files,histo):
               htmp.SetLineColor(files[k][2])
               htmp.SetLineWidth(2)
 
-              #Add histos to stack or individually for plotting  
+              #Add histos for plotting  
               allhistos.append(htmp)    
               file.Close()
 
@@ -177,17 +177,18 @@ print "[INFO] Reading configuration . . ."
 
 directory   = 'histograms'
 
-#Files containing the histogram to plot ['Name of file','Legend','Color']
+#Files containing the histogram to plot ['Name of file','Legend','Color'] #EDIT FOR MORE
 files = [
             ['histos_DESY_May23.root',          'DESY May 23',        ROOT.kRed],
             ['histos_calibration_May23.root',   'Calibration May 23',  ROOT.kAzure],
         ]
 
-#Histograms to plot ['Histogram name in file','X axis label','Y axis label']
+#Histograms to plot ['Histogram name in file','X axis label','Y axis label'] ##EDIT FOR MORE
 histos_1d = [
     ['h_top_ms_top_th','Top: measured-theoretical (mm)','# of tiles'],
 ]
 
+#Histograms to plot ['Histogram name in file','X axis label','Y axis label'] #EDIT FOR MORE
 histos_2d = [
     ['h_dtop_vs_dbot','Top: measured-theoretical (mm)','Bottom: measured-theoretical (mm)'],
 ]
