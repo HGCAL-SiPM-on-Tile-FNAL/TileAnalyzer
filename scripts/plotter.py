@@ -4,17 +4,21 @@ import sys
 import os
 import argparse
 import math
+import  string
+import ast
+import glob
+from  ConfigParser import *
 
 ROOT.gROOT.SetBatch(True)
 ROOT.gStyle.SetOptStat(0)
 
-def Plot1D(directory,files,histo):
+def Plot1D(directory,files,histo,tagname):
        #Plot it
        allhistos = []
        #Get gistograms and give them format, collect them in array
        for k in range(0,len(files)):
               #Get histograms
-              print directory+'/'+files[k][0]
+              #print directory+'/'+files[k][0]
               file = ROOT.TFile.Open(directory+'/'+files[k][0])
               tmp  = file.Get(histo[0])
               htmp = tmp.Clone()
@@ -59,8 +63,8 @@ def Plot1D(directory,files,histo):
        for k in range(0,len(allhistos)):  allhistos[k].Draw("Histo SAME")
 
        #Draw a legend
-       leg_1 = ROOT.TLegend(0.25,0.75,0.85,0.90)
-       leg_1.SetNColumns(3)
+       leg_1 = ROOT.TLegend(0.15,0.75,0.85,0.90)
+       leg_1.SetNColumns(2)
        leg_1.SetBorderSize(0)
        leg_1.SetTextSize(0.030)
        leg_1.SetTextFont(42)
@@ -69,7 +73,7 @@ def Plot1D(directory,files,histo):
        leg_1.SetFillColor(0)
        leg_1.SetFillStyle(0)
        leg_1.Draw()
-       for k in range(0,len(allhistos)): leg_1.AddEntry(allhistos[k],"%s"%files[k][1], "l")
+       for k in range(0,len(allhistos)): leg_1.AddEntry(allhistos[k],"%s"%files[k][1], "p")
 
        #Add CMS labels
        pt1 = ROOT.TPaveText(0.1863218,0.886316,0.3045977,0.978947,"brNDC")
@@ -86,18 +90,16 @@ def Plot1D(directory,files,histo):
        
        #Save plot
        c1.Update()
-       c1.SaveAs("plots1d/plot_%s.png"%histo[0])
-       c1.SaveAs("plots1d/plot_%s.pdf"%histo[0])
+       c1.SaveAs("plots/%s/plots1d/plot_%s.png"% (tagname,histo[0]) )
        del c1
 
 
-def Plot2D(directory,files,histo):
+def Plot2D(directory,files,histo,tagname):
        #Plot it
        allhistos = []
        #Get gistograms and give them format, collect them in array
        for k in range(0,len(files)):
               #Get histograms
-              print directory+'/'+files[k][0]
               file = ROOT.TFile.Open(directory+'/'+files[k][0])
               tmp  = file.Get(histo[0])
               htmp = tmp.Clone()
@@ -136,23 +138,23 @@ def Plot2D(directory,files,histo):
        maxs = []
        for j in range(0,len(allhistos)):  maxs.append(allhistos[j].GetMaximum())
        maxvalue = max(maxs)
-       histoframe.SetMaximum(1.3*maxvalue)
+       histoframe.SetMaximum(1.4*maxvalue)
        
        #Draw all histograms 
        for k in range(0,len(allhistos)):  allhistos[k].Draw("SCAT SAME")
 
        #Draw a legend
-       leg_1 = ROOT.TLegend(0.25,0.75,0.85,0.90)
-       leg_1.SetNColumns(3)
+       leg_1 = ROOT.TLegend(0.15,0.17,0.85,0.31)
+       leg_1.SetNColumns(2)
        leg_1.SetBorderSize(0)
-       leg_1.SetTextSize(0.030)
+       leg_1.SetTextSize(0.028)
        leg_1.SetTextFont(42)
        leg_1.SetLineColor(1)
        leg_1.SetLineWidth(10)
        leg_1.SetFillColor(0)
        leg_1.SetFillStyle(0)
        leg_1.Draw()
-       for k in range(0,len(allhistos)): leg_1.AddEntry(allhistos[k],"%s"%files[k][1], "l")
+       for k in range(0,len(allhistos)): leg_1.AddEntry(allhistos[k],"%s"%files[k][1], "p")
 
        #Add CMS labels
        pt1 = ROOT.TPaveText(0.1863218,0.886316,0.3045977,0.978947,"brNDC")
@@ -169,38 +171,83 @@ def Plot2D(directory,files,histo):
        
        #Save plot
        c1.Update()
-       c1.SaveAs("plots2d/plot_%s.png"%histo[0])
-       c1.SaveAs("plots2d/plot_%s.pdf"%histo[0])
+       c1.SaveAs("plots/%s/plots2d/plot_%s.png"% (tagname,histo[0]) )
        del c1
+
+#Get input/output information
+parser = argparse.ArgumentParser(description='Command line parser of skim options')
+parser.add_argument('--config' ,  dest='cfgfile',  help='Name of config file',  required = True)
+parser.add_argument('--tag'    ,  dest='tag'    ,  help='Name of the default algo folder (e.g. Default)',  required = True)
+args            = parser.parse_args()
+configfilename  = args.cfgfile
+tagname         = args.tag
+
+print "[INFO] Reading configuration file . . ."
+cfgparser = ConfigParser()
+cfgparser.read('%s'%configfilename)
+input_dir    = ast.literal_eval(cfgparser.get("plotconfiguration","input_dir"))
+print "    -The input  directory:"
+print "      *",input_dir
+output_dir   = ast.literal_eval(cfgparser.get("plotconfiguration","output_dir"))
+print "    -The output directory:"
+print "      *",output_dir
+os.system("mkdir plots")
+os.system("mkdir plots/%s"%tagname)
 
 print "[INFO] Reading configuration . . ."
 
-directory   = 'histograms'
-
 #Files containing the histogram to plot ['Name of file','Legend','Color'] #EDIT FOR MORE
 files = [
-            ['histos_DESY_May23.root',          'DESY May 23',        ROOT.kRed],
-            ['histos_calibration_May23.root',   'Calibration May 23',  ROOT.kAzure],
+#            ['histos_Data_1819_1_1_M_0.root',      'NIU-18/19, f1, M, 0',  ROOT.kGreen+1],
+#            ['histos_Data_1819_1_2_M_0.root',      'NIU-18/19, f2, M, 0',  ROOT.kRed],
+#            ['histos_Data_1819_1_3_M_0.root',      'NIU-18/19, f3, M, 0',  ROOT.kBlue+1],
+#            ['histos_Data_1819_1_4_M_0.root',      'NIU-18/19, f4, M, 0',  ROOT.kOrange+1],
+#            ['histos_Data_1819_1_5_M_0.root',      'NIU-18/19, f5, M, 0',  ROOT.kViolet],
+#            ['histos_Data_1819_1_6_M_0.root',      'NIU-18/19, f6, M, 0',  ROOT.kAzure+1],
+#            ['histos_Data_1819_1_7_M_0.root',      'NIU-18/19, f7, M, 0',  ROOT.kPink+1],
+#            ['histos_Data_1819_1_8_M_0.root',      'NIU-18/19, f8, M, 0',  ROOT.kBlack],
+
+#            ['histos_Data_1819_1_1_H_0.root',      'NIU-18/19, f1, H, 0',  ROOT.kGreen+1],
+#            ['histos_Data_1819_1_2_H_0.root',      'NIU-18/19, f2, H, 0',  ROOT.kRed],
+#            ['histos_Data_1819_1_3_H_0.root',      'NIU-18/19, f3, H, 0',  ROOT.kBlue+1],
+#            ['histos_Data_1819_1_4_H_0.root',      'NIU-18/19, f4, H, 0',  ROOT.kOrange+1],
+#            ['histos_Data_1819_1_5_H_0.root',      'NIU-18/19, f5, H, 0',  ROOT.kViolet],
+#            ['histos_Data_1819_1_6_H_0.root',      'NIU-18/19, f6, H, 0',  ROOT.kAzure+1],
+#            ['histos_Data_1819_1_7_H_0.root',      'NIU-18/19, f7, H, 0',  ROOT.kPink+1],
+#            ['histos_Data_1819_1_8_H_0.root',      'NIU-18/19, f8, H, 0',  ROOT.kBlack],
         ]
 
 #Histograms to plot ['Histogram name in file','X axis label','Y axis label'] ##EDIT FOR MORE
 histos_1d = [
-    ['h_top_ms_top_th','Top: measured-theoretical (mm)','# of tiles'],
+    ['h_dtop_ms_th','#Delta_{top} = Observed - Expected (mm)','# of tiles'],
+    ['h_dbot_ms_th','#Delta_{bot} = Observed - Expected (mm)','# of tiles'],
+    ['h_dlft_ms_th','#Delta_{lft} = Observed - Expected (mm)','# of tiles'],
+    ['h_drgt_ms_th','#Delta_{rgt} = Observed - Expected (mm)','# of tiles'],
 ]
 
 #Histograms to plot ['Histogram name in file','X axis label','Y axis label'] #EDIT FOR MORE
 histos_2d = [
-    ['h_dtop_vs_dbot','Top: measured-theoretical (mm)','Bottom: measured-theoretical (mm)'],
+    ['h_dtop_drgt','#Delta_{top} (mm)','#Delta_{rgt} (mm)'],
+    ['h_dtop_dlft','#Delta_{top} (mm)','#Delta_{lft} (mm)'],
+    ['h_dtop_dbot','#Delta_{top} (mm)','#Delta_{bot} (mm)'],
+    ['h_dbot_drgt','#Delta_{bot} (mm)','#Delta_{rgt} (mm)'],
+    ['h_dbot_dlft','#Delta_{bot} (mm)','#Delta_{lft} (mm)'],
+    ['h_drgt_dlft','#Delta_{rgt} (mm)','#Delta_{lft} (mm)'],
 ]
 
 #Plot 1d distributions
-os.system("mkdir plots1d")
+os.system("mkdir plots/%s"%tagname)
+os.system("mkdir plots/%s/plots1d/"%tagname)
 #loop over the 1d histograms you want to compare
 print "[INFO] Plotting 1d distributions . . ."
-for histo in histos_1d: Plot1D(directory,files,histo)
+for histo in histos_1d: Plot1D(input_dir+"/"+tagname,files,histo,tagname)
 
 #Plot 2d distributions
-os.system("mkdir plots2d")
+os.system("mkdir plots/%s"%tagname)
+os.system("mkdir plots/%s/plots2d/"%tagname)
 #loop over the 2d histograms you want to compare
 print "[INFO] Plotting 2d distributions . . ."
-for histo in histos_2d: Plot2D(directory,files,histo)
+for histo in histos_2d: Plot2D(input_dir+"/"+tagname,files,histo,tagname)
+
+
+

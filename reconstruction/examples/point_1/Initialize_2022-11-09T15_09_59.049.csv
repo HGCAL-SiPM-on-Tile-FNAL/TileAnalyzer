@@ -1,0 +1,45 @@
+DateTime:, 2022-11-09T15:09:59.051
+Corner w.r.t. photo center [mm] 
+      cid,2
+      cx ,-1.1301494193543433
+      cy ,-0.9181626595847873
+Noozle Location [mm]
+      nid,2
+      nx ,28.436140501318356
+      ny , 95.56437424628365
+Corner w.r.t. photo center [mm] 
+      cid,1
+      cx ,-0.16646257910968984
+      cy ,0.4555259493462879
+Noozle Location [mm]
+      nid,1
+      nx ,-4.563859498681643
+      ny , 95.56437424628365
+Corner w.r.t. photo center [mm] 
+      cid,4
+      cx ,0.6726655625106607
+      cy ,0.7760283485564525
+Noozle Location [mm]
+      nid,4
+      nx ,-4.563859498681643
+      ny , 129.56437424628365
+Corner w.r.t. photo center [mm] 
+      cid,3
+      cx ,-0.27537724717168244
+      cy ,-0.045896207861957514
+Noozle Location [mm]
+      nid,3
+      nx ,28.436140501318356
+      ny , 129.56437424628365
+Corner points in global coordinate system x-y [mm]: 
+      Top_right,     28.269677922208665 , 130.01990019562993  
+      Top_left,      -5.694008918035987 , 128.64621158669885  
+      Bottom_left,   -4.839236745853325 , 95.51847803842169  
+      Bottom_right,  29.108806063829018 , 96.3404025948401  
+Trapezoid edge sizes [mm]:
+      Top,           33.991455458342976
+      Bottom,        33.95799126250651
+      Left,          33.13875926331561
+      Right,         33.6899494609248
+
+
