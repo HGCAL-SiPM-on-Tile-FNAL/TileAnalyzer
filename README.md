@@ -30,12 +30,12 @@ python scripts/process_rawdata.py --config config/configuration_multishot.cfg --
 ```
 
 ## Convert CSV to ROOT files
-Now, it is time to use the processed files (CSV or shots) into ROOT files. Note that this is super quick for the default. However, for the multishot this is the part where we measure the four edges using fits. We can use the cores available in the LPC nodes to do it (there is up to 8 cores available). To maximize speed, you should assign one folder per node. The number of points you want to measure from each folder is defined in the config file.  One can also pick the initial or final round of shots in the config file.  
+Now, it is time to use the processed files (CSV or shots) into ROOT files. Note that this is super quick for the default. However, for the multishot this is the part where we measure the four edges using fits. We can use the cores available in the LPC nodes to do it (there is up to 8 cores available). To maximize speed, you should assign one folder per node. The number of points per folder that you want to measure is defined in the config file. One can also pick between initial an final round of shots for this in the config file.  
 ```` 
 python scripts/CSVtoROOTconverterDefault.py   --config config/configuration_default.cfg   --tag Default
 python scripts/CSVtoROOTconverterMultishot.py --config config/configuration_multishot.cfg --tag Multishot
 ````
-## Make Histograms
+## Make Histograms and plot them
 The script used to make 1d or 2d histogram is called Histogrammer.py. The code skeleton is based PyROOT. That script creates a ROOT file with histograms, and put it in a folder called histograms.
 ```` 
 python scripts/Histogrammer.py --config config/configuration_default.cfg   --tag Default
@@ -47,7 +47,7 @@ python scripts/plotter.py --config config/configuration_default.cfg   --tag Defa
 python scripts/plotter.py --config config/configuration_multishot.cfg --tag Multishot
 ````
 
-## Multshot Algorithm Development 
+## Multishot Algorithm Development Script
 There is a script (Reconstruction_Multishot.py) that runs the whole multishot routine including all supporting plots. It is located in the reconstruction folder. It will run your algorithm on shots in a folder called examples/point_1. Just always make sure the noozle location in the script is the same as the csv file. To run it is very easy!
 ```` 
 cd reconstruction
