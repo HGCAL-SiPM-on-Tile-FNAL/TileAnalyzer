@@ -1,3 +1,13 @@
+# Tile Analyzer
+Code to analyze tiles
+
+## Install
+
+Log in to the LPC machines
+```
+ssh -XY username@cmslpc-sl7.fnal.gov
+```
+
 Get code from git
 ````
 cmsrel CMSSW_10_6_19_patch2
@@ -42,3 +52,4 @@ There is a script (Reconstruction_Multishot.py) that runs the whole multishot ro
 ```` 
 cd reconstruction
 python Reconstruction_Multishot.py
+```` 
