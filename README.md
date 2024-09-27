@@ -37,14 +37,14 @@ python scripts/Histogrammer.py  --config config/configuration.cfg
 ```
 
 ## Calibration plots
-To derive the fits used to calibrate the PnP measurement. These fits are used in the machine to correct residual differences between the PnP measurement and the OGP reference measurement.
+To derive the fits used to calibrate the PnP measurement. These fits are used in the machine to correct residual differences between the PnP measurement and the OGP reference measurement. The figures are saved in the plots/calibration folder. Note that you can change the name of the folder in the .cfg file.
 ```
 python scripts/calibration.py  --config config/configuration.cfg
 
 ```
 
 ## Measurement plots
-To derive the plots associated to any PnP measurements
+To derive the plots associated to any PnP measurements. The figures are saved in the plots/measurement folder. Note that you can change the name of the folder in the .cfg file.
 ```
 python scripts/plotter.py  --config config/configuration.cfg
 
