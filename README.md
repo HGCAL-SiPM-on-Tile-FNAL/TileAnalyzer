@@ -3,12 +3,14 @@ Code to analyze tiles
 
 ## Install
 
-Log in to the LPC machines
+Log in to the LPC machines, setup singularity to SL7 and get in your nobackup area.
 ```
-ssh -XY username@cmslpc-sl7.fnal.gov
+ssh -XY username@cmslpc-el9.fnal.gov
+cmssw-el7 --bind /uscms_data
+cd nobackup/
 ```
 
-Get code from git
+Get code from git. 
 ````
 cmsrel CMSSW_10_6_19_patch2
 cd CMSSW_10_6_19_patch2/src
@@ -16,40 +18,34 @@ cmsenv
 git clone https://github.com/HGCAL-SiPM-on-Tile-FNAL/TileAnalyzer 
 cd TileAnalyzer 
 ````
+Note that this CMSSW version only works on SL7, so you have to run the singularity command (cmssw-el7) before you do cmsenv.
 
-## Processed raw PnP data 
-First copy all systematic data folder into data/raw/. This could be both default or multishot 
-```
-scp -r Data_* username@cmslpc-sl7.fnal.gov/yourlocaladdress/data/raw 
+## Data processing
+The PnP machine stores the tile dimensional data in .csv files. They must be copied to the data directory. If the data is used for dimensional calibration, they must be stored in the calibration folder. If the data are used for measurements, they must be stored in the dataset folder. As an example, I provided recent measurements of reference bare tiles used for calibration (Data_bare_T3435_OGP_1,  Data_bare_T3637_OGP_1, Data_bare_T3839_OGP_1, Data_bare_T4041_OGP_1). I also provided recent measurements of bare tiles (Data_bare_T3435_C1,  Data_bare_T3435_C2,	Data_bare_T3637_C1,  Data_bare_T3637_C2,	Data_bare_T3839_C1, Data_bare_T3839_C2,Data_bare_T4041_C1,Data_bare_T4041_C2). 
 
+We can convert the data from .csv to root file using the CSVtoROOTconverterDefault.py script. The .cfg contains names of the tile data to be processed using the script. The output of the script is stored in the ntuples folder. It processes both calibration and measurement data.
 ```
-Then, processed the data into organized folders. The output will be in data/processed. The config file defines what folder you want to process. The tag is the name of the output folder.
-```
-python scripts/process_rawdata.py --config config/configuration_default.cfg   --tag Default
-python scripts/process_rawdata.py --config config/configuration_multishot.cfg --tag Multishot
+python scripts/CSVtoROOTconverterDefault.py  --config config/configuration.cfg
+
 ```
 
-## Convert CSV to ROOT files
-Now, it is time to use the processed files (CSV or shots) into ROOT files. Note that this is super quick for the default. However, for the multishot this is the part where we measure the four edges using fits. We can use the cores available in the LPC nodes to do it (there is up to 8 cores available). To maximize speed, you should assign one folder per node. The number of points per folder that you want to measure is defined in the config file. One can also pick between initial an final round of shots for this in the config file.  
-```` 
-python scripts/CSVtoROOTconverterDefault.py   --config config/configuration_default.cfg   --tag Default
-python scripts/CSVtoROOTconverterMultishot.py --config config/configuration_multishot.cfg --tag Multishot
-````
-## Make Histograms and plot them
-The script used to make 1d or 2d histogram is called Histogrammer.py. The code skeleton is based PyROOT. That script creates a ROOT file with histograms, and put it in a folder called histograms.
-```` 
-python scripts/Histogrammer.py --config config/configuration_default.cfg   --tag Default
-python scripts/Histogrammer.py --config config/configuration_multishot.cfg --tag Multishot
-````
-Then, the next step is plot your 1d and 2d histograms using the plotter.py. The instructions are inside the script, make sure that you point to the correct names when running default vs multishot plots. The plot are saved in the folders plots1d and plots2d. These folders are inside the plots/<tag> folder.
-```` 
-python scripts/plotter.py --config config/configuration_default.cfg   --tag Default
-python scripts/plotter.py --config config/configuration_multishot.cfg --tag Multishot
-````
+## Histograms and graphs
+We make ROOT histograms and graphs from the ntuples using the Histogrammer script. Similarly, we have to provide names of the tile data in the .cfg file. Note that we could also provide the expected values of the tile dimensions (See more in config file).
+```
+python scripts/Histogrammer.py  --config config/configuration.cfg
 
-## Multishot Algorithm Development Script
-There is a script (Reconstruction_Multishot.py) that runs the whole multishot routine including all supporting plots. It is located in the reconstruction folder. It will run your algorithm on shots in a folder called examples/point_1. Just always make sure the noozle location in the script is the same as the csv file. To run it is very easy!
-```` 
-cd reconstruction
-python Reconstruction_Multishot.py
-```` 
+```
+
+## Calibration plots
+To derive the fits used to calibrate the PnP measurement. These fits are used in the machine to correct residual differences between the PnP measurement and the OGP reference measurement.
+```
+python scripts/calibration.py  --config config/configuration.cfg
+
+```
+
+## Measurement plots
+To derive the plots associated to any PnP measurements
+```
+python scripts/plotter.py  --config config/configuration.cfg
+
+```
